@@ -1,0 +1,6 @@
+RoverBeagleBone Bugs
+
+=====================
+
+1) InitScripts/uart_setup.py only initializes UART1, UART2 and UART4
+2) 
