@@ -1,8 +1,6 @@
 RoverBeagleBone
 ===============
 
-'''Code Block'''
-
 
 When pulling the repo to the BeagleBone, there is a set of things that
 must occur before a new BeagleBone will function properly.
