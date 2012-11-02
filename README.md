@@ -1,14 +1,14 @@
 RoverBeagleBone
 ===============
 
-When pulling the repo to the BeagleBone, there is a set of things that
-must occur before a new BeagleBone will function properly.
+When pulling the repo to the BeagleBone, there is a set of things that\n
+must occur before a new BeagleBone will function properly.\n
 
-Initializations
-1) Update the OS on the BeagleBone to Ubuntu 12.04
-	a) Remove the SD card from BeagleBone and format it.
-	b) Download the most recent copy of the 12.04 Ubuntu distro specifically
-	   built for BeagleBone. Most recent .tar.xz files can be found here: 
+Initializations\n
+1) Update the OS on the BeagleBone to Ubuntu 12.04\n
+	a) Remove the SD card from BeagleBone and format it.\n
+	b) Download the most recent copy of the 12.04 Ubuntu distro specifically\n
+	   built for BeagleBone. Most recent .tar.xz files can be found here:\n 
 	   http://rcn-ee.net/deb/rootfs/precise/
 	c) Once you have downloaded the .tar.xz file, navigate to the directory
 	   that the file is in and unpack it using the following commands:
