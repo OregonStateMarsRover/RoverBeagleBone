@@ -8,9 +8,7 @@ must occur before a new BeagleBone will function properly.
 ### 1. Update the OS on the BeagleBone to Ubuntu 12.04
 * a) Remove the SD card from BeagleBone and format it.
 * b) Download the most recent copy of the 12.04 Ubuntu distro specifically built for BeagleBone. Most recent .tar.xz files can be found here:
-'''
-http://rcn-ee.net/deb/rootfs/precise/
-'''
+	http://rcn-ee.net/deb/rootfs/precise/
 * c) Once you have downloaded the .tar.xz file, navigate to the directory that the file is in and unpack it using the following commands:
 '''
 tar -xJf [file_name].tar.xz
