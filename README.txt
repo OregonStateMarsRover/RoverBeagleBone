@@ -41,4 +41,28 @@ Initializations
 	      configurations.
 
 ## General
-### 1) 
+### 1) How to setup an SSH connection between your Ubuntu laptop and the BeagleBone
+	a) Connect an Ethernet cable from the BeagleBone to your laptop.
+	b) Click on the Internet icon in the upper righthand corner of your laptop screen, 
+		then select 'Edit Connections', then 'Wired Connection 1', and then 'Edit'
+	c) Select the 'IPv4 Settings' tab, and then change method to 'Manual'
+	d) Add an address with the following values:
+		Address: 10.0.0.2
+		Netmask: 255.255.255.0
+		Gateway: 10.0.0.1
+	   Now 'Save'
+	   NOTE: What this does is set the laptop to be 10.0.0.2 and 
+		 then the BeagleBone to be 10.0.0.1
+	e) Now that the laptop is configured, go to the BeagleBone and type:
+		sudo ifconfig 10.0.0.1
+	   NOTE: Before, we setup the laptop, but the BeagleBone did not
+		 know it's own address. This sets up its address.
+	f) Now, from the BeagleBone type:
+		ping 10.0.0.2
+	g) You should see it succeed. Now, from the laptop type:
+		ping 10.0.0.1
+	h) You should see it succeed. Now, from the laptop type:
+		sudo ssh ubuntu@10.0.0.1
+		Type your password
+	i) You are now connected via SSH!
+### 2)
