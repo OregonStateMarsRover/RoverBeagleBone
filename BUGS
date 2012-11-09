@@ -3,4 +3,6 @@ RoverBeagleBone Bugs
 =====================
 
 1) InitScripts/uart_setup.py only initializes UART1, UART2 and UART4
-2) 
+2) InitScripts/initdhclient.sh may be UNNECESSARY because we can link 
+	directly from the BeagleBone to a laptop with no network switch.
+3) 
