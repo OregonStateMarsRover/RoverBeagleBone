@@ -36,6 +36,9 @@ Initializations
 	cp /home/ubuntu/RoverBeagleBone/InitScripts/inituart.sh /etc/init.d
 	chmod +x /etc/init.d/inituart.sh
 	update-rc.d inituart.sh defaults
+	cp /home/ubuntu/RoverBeagleBone/InitScripts/initip.sh /etc/init.d
+	chmod +x /etc/init.d/initip.sh
+	update-rc.d initip.sh defaults
 	
 	NOTE: This initialization sets up the eth0 for SSH and the UART
 	      configurations.
