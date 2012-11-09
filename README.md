@@ -19,4 +19,5 @@ Detailed instructions can be found in the README.txt file in this repo
     update-rc.d inituart.sh defaults
 
 ## General
-### 1) 
+### 1) Setup SSH from BeagleBone to Laptop directly, without a network switch. (Details in README.txt)
+### 2) 
