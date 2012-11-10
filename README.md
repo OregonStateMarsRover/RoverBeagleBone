@@ -20,7 +20,6 @@ Detailed instructions can be found in the README.txt file in this repo
     cp /home/ubuntu/RoverBeagleBone/InitScripts/initip.sh /etc/init.d
     chmod +x /etc/init.d/initip.sh
     update-rc.d initip.sh defaults
-### 3) Transfer and install the pySerial library to the BeagleBone (Details in README.txt)
 
 ## General
 ### 1) Setup SSH from BeagleBone to Laptop directly, without a network switch. (Details in README.txt)

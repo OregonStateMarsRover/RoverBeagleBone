@@ -1,5 +1,5 @@
 #!/bin/bash
 
-echo "Starting DHClient: eth1";
-dhclient eth1
+echo "Starting DHClient: eth0";
+dhclient eth0
 echo "DHClient Started";
