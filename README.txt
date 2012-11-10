@@ -68,4 +68,12 @@ Initializations
 		sudo ssh ubuntu@10.0.0.1
 		Type your password
 	i) You are now connected via SSH!
-### 2)
+### 2) If BeagleBone is not attached to an internet connection, but just through SSH, you can 
+	transfer files like this:
+		scp file_name ubuntu@10.0.0.1:/home/ubuntu/
+	a) Additionally if you need to transfer whole files, you can just make it a tar.gz
+		tar cvzf tarfile.tar.gz files...
+	   To expand .tar.gz
+		tar xzvf tarfile.tar.gz
+### 3) 
+
