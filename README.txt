@@ -42,6 +42,14 @@ Initializations
 	
 	NOTE: This initialization sets up the eth0 for SSH and the UART
 	      configurations.
+3) Transfer and install the pySerial library to the BeagleBone:
+	a) Download pySerial on your laptop here: 
+		http://pypi.python.org/packages/source/p/pyserial/pyserial-2.6.tar.gz
+	b) Follow the instructions in General #2 to transfer pyserial-2.6.tar.gz to the BeagleBone
+	c) Once on the BeagleBone, expand the .tar.gz file
+	d) cd into the newly expanded directory pyserial-2.6 and type:
+		sudo python setup.py install
+	e) You have installed pySerial!
 
 ## General
 ### 1) How to setup an SSH connection between your Ubuntu laptop and the BeagleBone
