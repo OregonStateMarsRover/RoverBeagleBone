@@ -13,8 +13,8 @@ class RoverPacket:
 		stuffed_content = bytearray()
 		for byte in self.content:
 			if byte in self.escaped_bytes.keys():
-				stuffed_content.append(escape_byte)
-				stuffed_content.append(escaped_bytes[byte])
+				stuffed_content.append(self.escape_byte)
+				stuffed_content.append(self.escaped_bytes[byte])
 			else:
 				stuffed_content.append(byte)
 		self.length = len(stuffed_content)+1 #length of everything after the length byte
