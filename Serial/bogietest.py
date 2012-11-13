@@ -37,6 +37,7 @@ if __name__ == '__main__':
 	except ValueError as e:
 		exit_msg(1)
 
-	bus = serial.Serial(port=20, baudrate=115200)
+	bus = serial.Serial(port='/dev/ttyUSB1',
+				baudrate=115200)
 	bus.write(packet.msg())
 	print str(packet)
