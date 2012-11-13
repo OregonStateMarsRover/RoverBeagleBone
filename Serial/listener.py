@@ -15,15 +15,14 @@ from bus import *
 
 class Listener(threading.Thread):
         def __init__(self, bus, queue):
-                print "[%.4f] Initializing Thread in Listener" % time.clock()
+                # Initializes threading
                 threading.Thread.__init__(self)
-                print "[%.4f] Initializing Listener" % time.clock()
+                # Stores the bus and queue objects
                 self.bus = bus
                 self.queue = queue
 
         def run(self):
                 list = []
-                print "[%.4f] Starting Listener" % time.clock()
                 while 1:
                         if self.bus.base.inWaiting() > 0:
                                 list.append(self.bus.base.read(1))
