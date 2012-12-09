@@ -36,7 +36,6 @@ class Receptionist(object):
 		while 1:
 			if self.queue.empty() is False:
 				print self.queue.get()
-				print '\n'
 	
 
 if __name__ == '__main__':
