@@ -7,7 +7,7 @@
 # BeagleBone and adds them to the queue for the Receptionist to then execute.
 
 import sys
-sys.path.append('/home/ubuntu/Serial')
+sys.path.append('/home/ubuntu/RoverBeagleBone/Serial')
 import serial, time
 import Queue
 import threading
@@ -21,22 +21,25 @@ from listener import *
 
 # Receptionist
 class Receptionist(object):
-        def __init__(self):
-                # Create bus object which holds all initialized ports
-                self.bus = Bus()
-                # Create queue object which holds all packets waiting to be used
-                self.queue = Queue.Queue()
-                # Create listener object which will be launched on another thread
-                # This listener, listens to every port and adds messages to the queue
-                self.listenerthread = Listener(self.bus, self.queue)
-                self.listenerthread.start()
+	def __init__(self):
+		# Create bus object which holds all initialized ports
+		self.bus = Bus()
+		# Create queue object which holds all packets waiting to be used
+		self.queue = Queue.Queue()
+		# Create listener object which will be launched on another thread
+		# This listener, listens to every port and adds messages to the queue
+		self.listenerthread = Listener(self.bus, self.queue)
+		self.listenerthread.start()
 
-        def start(self):
-                while 1:
-                        if self.queue.empty() is False:
-                                print self.queue.get()
-
+	def start(self):
+		print "Starting Receptionist"
+		while 1:
+			if self.queue.empty() is False:
+				print self.queue.get()
+				print '\n'
+	
 
 if __name__ == '__main__':
-        receptionist = Receptionist()
-        receptionist.start()
+	receptionist = Receptionist()
+	receptionist.start()
+
