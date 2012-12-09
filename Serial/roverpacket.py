@@ -65,13 +65,13 @@ class RoverPacket(object):
 		if start != self.start_byte: raise Exception("start byte error %s != %s"%(start, self.start_byte))
 		self.addr = int(port.read().encode("hex"), 16)
 		length = int(port.read().encode("hex"), 16)
-		escaped_content = bytearray(port.read(length))
-
-		self.content = self.unescape_content(escaped_content)
+		self.content = bytearray(port.read(length))
 		self.compute_full_message()
 
 		checksum = int(port.read().encode("hex"), 16)
 		if checksum != self.checksum: raise Exception("checksum error %s != %s"%(checksum, self.checksum))
+
+		self.content = self.unescape_content(self.content)
 
 
 	@classmethod
