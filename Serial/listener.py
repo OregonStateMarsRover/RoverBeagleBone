@@ -53,4 +53,3 @@ class Listener(threading.Thread):
 		for wheelAddr in wheels:
 			packet = BogiePacket(wheelAddr, 0, 0)
 			self.queue.put(packet)
-

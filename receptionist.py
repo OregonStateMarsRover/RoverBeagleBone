@@ -34,6 +34,7 @@ class Receptionist(object):
 	def start(self):
 		print "Starting Receptionist"
 		while 1:
+<<<<<<< HEAD
 			# Check the queue that holds things coming from base
 			if self.queue.empty() is False:
 				packet = self.queue.get()
@@ -73,6 +74,10 @@ class Receptionist(object):
 		#elif packet[0] == 16:	# Then Package Delivery Address
 		#	# Do something
 	
+=======
+			if self.queue.empty() is False:
+				print self.queue.get()
+>>>>>>> fa3056b604486f6713ad0d3c07ef9aafeff3653f
 	
 
 if __name__ == '__main__':
