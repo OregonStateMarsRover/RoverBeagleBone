@@ -10,8 +10,6 @@ import time
 import threading
 from roverpacket import *
 from bus import *
-from joy import *
-
 
 class Queuer(threading.Thread):
     def __init__(self, receptionist_queue, roverStatus):
@@ -30,7 +28,7 @@ class Queuer(threading.Thread):
                     self.receptionist_queue.put(command)
             elif self.roverStatus.roverAlive == 0:
                 # Make Rover STOP Immediately - Connection has been lost
-                drive_commands = self.assemble__stop_drive_packet(drive_commands)
+                drive_commands = self.assemble_stop_drive_packet()
                 for command in drive_commands:
                     self.receptionist_queue.put(command)
             time.sleep(self.waitTime)
