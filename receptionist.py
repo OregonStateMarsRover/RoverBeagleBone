@@ -27,6 +27,7 @@ class Receptionist(object):
 		self.packagecount = 0
 		self.bus = Bus()
 		self.base_queue = Queue.Queue()
+		self.roverStatus = RoverStatus
 		# This listener, listens to every port and adds messages to the queue
 		self.listenerthread = Listener(self.bus, self.base_queue, RoverStatus)
 		self.listenerthread.start()
@@ -48,22 +49,24 @@ class Receptionist(object):
 			self.bbcount = self.bbcount + 1
 			print "BeagleBone packet %d received!" % self.bbcount
 		if packet[0] == 'drive':
-			self.count = self.drivecount + 1
-			print "Drive packet %d received!" % self.drivecount
+			self.drivecount = self.drivecount + 1
+			print "Drive packet ", self.drivecount, " received! - Address: ", packet[1], \
+				"Speed: ", self.roverStatus.wheel_commands[packet[1] - 2]['velo'], \
+				" Angle: ", self.roverStatus.wheel_commands[packet[1] - 2]['angle'] 
 		elif packet[0] == 'arm':
-			self.count = self.drivecount + 1
+			self.armcount = self.armcount + 1
 			print "Arm packet %d received!" % self.armcount
 			self.bus.arm.write(packet[1])
 		elif packet[0] == 'tripod':
-			self.count = self.drivecount + 1
+			self.tripodcount = self.tripodcount + 1
 			print "Tripod packet %d received!" % self.tripodcount
 			self.bus.tripod.write(packet[1])
 		elif packet[0] == 'mux':
-			self.count = self.drivecount + 1
+			self.muxcount = self.muxcount + 1
 			print "MUX packet %d received!" % self.muxcount
 #			self.bus.mux.write(packet[1])
 		elif packet[0] == 'package':
-			self.count = self.drivecount + 1
+			self.packagecount = self.packagecount + 1
 			print "Package packet %d received!" % self.packagecount
 #			self.bus.package.write(packet[1])
 

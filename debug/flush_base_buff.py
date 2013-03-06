@@ -6,5 +6,5 @@ from bus import *
 bus = Bus()
 bus.base.flushInput()
 print "Flushed Base Input Buffer"
-bus.motor.flushOutput()
+bus.drive.flushOutput()
 print "Flushed Rover Output Buffer"
