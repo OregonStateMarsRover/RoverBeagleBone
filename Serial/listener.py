@@ -35,7 +35,7 @@ class Listener(threading.Thread):
 
 				if packet.addr == 1:
 					address = 'beaglebone'
-				elif (packet.addr >= 2) or (packet.addr <= 7):
+				elif (packet.addr >= 2) and (packet.addr <= 7):
 					address = 'drive'
 					self.roverStatus.wheel_commands[packet.addr - 2]['velo'] = packet.content[0]
 					self.roverStatus.wheel_commands[packet.addr - 2]['angle'] = packet.content[1]
