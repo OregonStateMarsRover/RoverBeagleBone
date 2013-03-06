@@ -6,6 +6,8 @@
 #############################
 
 class RoverStatus():
+    roverAlive = 0
+
     # Drive Variables
     # TODO: make wheels 2 to 7 (starting with front left, ending with rear right)
 
