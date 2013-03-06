@@ -30,7 +30,7 @@ class Receptionist(object):
 		print "Starting Receptionist"
 		while 1:
 			if self.base_queue.empty() is False:
-				packet = self.queue.get()
+				packet = self.base_queue.get()
 				self.onrover_send_data(packet)
 
 			#if self.rover_queue.empty() is False:
