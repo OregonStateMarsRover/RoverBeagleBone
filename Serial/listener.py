@@ -33,19 +33,19 @@ class Listener(threading.Thread):
 					RoverPacket.checksum_error = 0
 					continue
 
-				if packet.addr == 1):
+				if packet.addr == 1:
 					address = 'beaglebone'
 				elif (packet.addr >= 2) or (packet.addr <= 7):
 					address = 'drive'
 					self.roverStatus.wheel_commands[packet.addr - 2]['velo'] = packet.content[0]
 					self.roverStatus.wheel_commands[packet.addr - 2]['angle'] = packet.content[1]
-				elif packet.addr == 8):
+				elif packet.addr == 8:
 					address = 'arm'
-				elif packet.addr == 9):
+				elif packet.addr == 9:
 					address = 'tripod'
-				elif packet.addr == 10):
+				elif packet.addr == 10:
 					address = 'mux'
-				elif packet.addr == 11):
+				elif packet.addr == 11:
 					address = 'package'
 
 				packet = packet.msg()
