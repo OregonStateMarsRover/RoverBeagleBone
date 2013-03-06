@@ -41,6 +41,8 @@ class Receptionist(object):
 
     def start(self):
         print "Starting Receptionist"
+        # Flush ALL buffers before doing anything
+        flush_all_buffers()
         while 1:
             if self.commands_queue.empty() is False:
                 packet = self.commands_queue.get()
@@ -76,6 +78,16 @@ class Receptionist(object):
             self.packagecount = self.packagecount + 1
             print "Package packet %d received!" % self.packagecount
 #			self.bus.package.write(packet[2])
+
+    def flush_all_buffers(self):
+        bus.base.flushInput()
+        bus.base.flushOutput()
+        bus.arm.flushInput()
+        bus.arm.flushOutput()
+        bus.tripod.flushInput()
+        bus.tripod.flushOutput()
+        bus.drive.flushInput()
+        bus.drive.flushOutput()
 
 if __name__ == '__main__':
     receptionist = Receptionist()
