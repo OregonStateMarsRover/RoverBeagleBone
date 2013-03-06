@@ -1,4 +1,4 @@
-########## Receptionist ########## 
+########## Receptionist ##########
 
 # Original Author: John Zeller
 
@@ -9,7 +9,8 @@
 import sys
 sys.path.append('/home/ubuntu/RoverBeagleBone/Serial')
 sys.path.append('/home/ubuntu/RoverBeagleBone/core')
-import serial, time
+import serial
+import time
 import Queue
 import threading
 from roverpacket import *
@@ -17,60 +18,60 @@ from bus import *
 from listener import *
 from rover_status import *
 
+
 class Receptionist(object):
-	def __init__(self):
-		self.drivecount = 0
-		self.bbcount = 0
-		self.armcount = 0
-		self.tripodcount = 0
-		self.muxcount = 0
-		self.packagecount = 0
-		self.bus = Bus()
-		self.base_queue = Queue.Queue()
-		self.roverStatus = RoverStatus
-		# This listener, listens to every port and adds messages to the queue
-		self.listenerthread = Listener(self.bus, self.base_queue, RoverStatus)
-		self.listenerthread.start()
+    def __init__(self):
+        self.drivecount = 0
+        self.bbcount = 0
+        self.armcount = 0
+        self.tripodcount = 0
+        self.muxcount = 0
+        self.packagecount = 0
+        self.bus = Bus()
+        self.base_queue = Queue.Queue()
+        self.roverStatus = RoverStatus
+        # This listener, listens to every port and adds messages to the queue
+        self.listenerthread = Listener(self.bus, self.base_queue, RoverStatus)
+        self.listenerthread.start()
 
-	def start(self):
-		print "Starting Receptionist"
-		while 1:
-			if self.base_queue.empty() is False:
-				packet = self.base_queue.get()
-				self.onrover_send_data(packet)
+    def start(self):
+        print "Starting Receptionist"
+        while 1:
+            if self.base_queue.empty() is False:
+                packet = self.base_queue.get()
+                self.onrover_send_data(packet)
 
-			#if self.rover_queue.empty() is False:
-			#	# Do Something
-		
-	def onrover_send_data(self, packet):
-		# This function receives a packet and determines where to
-		# send it and then sends it
-		if packet[0] == 'beaglebone':
-			self.bbcount = self.bbcount + 1
-			print "BeagleBone packet %d received!" % self.bbcount
-		if packet[0] == 'drive':
-			self.drivecount = self.drivecount + 1
-			print "Drive packet ", self.drivecount, " received! - Address: ", packet[1], \
-				"Speed: ", self.roverStatus.wheel_commands[packet[1] - 2]['velo'], \
-				" Angle: ", self.roverStatus.wheel_commands[packet[1] - 2]['angle'] 
-		elif packet[0] == 'arm':
-			self.armcount = self.armcount + 1
-			print "Arm packet %d received!" % self.armcount
-			self.bus.arm.write(packet[1])
-		elif packet[0] == 'tripod':
-			self.tripodcount = self.tripodcount + 1
-			print "Tripod packet %d received!" % self.tripodcount
-			self.bus.tripod.write(packet[1])
-		elif packet[0] == 'mux':
-			self.muxcount = self.muxcount + 1
-			print "MUX packet %d received!" % self.muxcount
+            # if self.rover_queue.empty() is False:
+            #	# Do Something
+
+    def onrover_send_data(self, packet):
+        # This function receives a packet and determines where to
+        # send it and then sends it
+        if packet[0] == 'beaglebone':
+            self.bbcount = self.bbcount + 1
+            print "BeagleBone packet %d received!" % self.bbcount
+        if packet[0] == 'drive':
+            self.drivecount = self.drivecount + 1
+    print "Drive packet ", self.drivecount, " received! - Address: ", packet[1], \
+        "Speed: ", self.roverStatus.wheel_commands[packet[1] - 2]['velo'], \
+        " Angle: ", self.roverStatus.wheel_commands[packet[1] - 2]['angle']
+    elif packet[0] == 'arm':
+        self.armcount = self.armcount + 1
+        print "Arm packet %d received!" % self.armcount
+        self.bus.arm.write(packet[1])
+    elif packet[0] == 'tripod':
+        self.tripodcount = self.tripodcount + 1
+        print "Tripod packet %d received!" % self.tripodcount
+        self.bus.tripod.write(packet[1])
+    elif packet[0] == 'mux':
+        self.muxcount = self.muxcount + 1
+        print "MUX packet %d received!" % self.muxcount
 #			self.bus.mux.write(packet[1])
-		elif packet[0] == 'package':
-			self.packagecount = self.packagecount + 1
-			print "Package packet %d received!" % self.packagecount
+    elif packet[0] == 'package':
+        self.packagecount = self.packagecount + 1
+        print "Package packet %d received!" % self.packagecount
 #			self.bus.package.write(packet[1])
 
 if __name__ == '__main__':
-	receptionist = Receptionist()
-	receptionist.start()
-
+    receptionist = Receptionist()
+    receptionist.start()
