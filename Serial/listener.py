@@ -11,12 +11,15 @@ import serial
 import time
 import Queue
 import threading
+import time
 from roverpacket import *
 from bus import *
 
 
 class Listener(threading.Thread):
-    def __init__(self, bus, queue, RoverStatus):
+    def __init__(self, bus, RoverStatus):
+    	self.start_time = time.time()
+    	self.interval_time
         # Initializes threading
         threading.Thread.__init__(self)
         # Stores the bus and queue objects
@@ -26,7 +29,11 @@ class Listener(threading.Thread):
 
     def run(self):
         print "Running Listener"
+        intervalAlive_start = time.time() # Start timer to catch roverAlive messages
         while 1:
+        	if (time.time() - intervalAlive_start) > 4: # If it has been 4 seconds since hearing from the rover
+        		self.roverStatus.roverAlive = 0
+        		intervalAlive_start = time.time() # Reset roverAlive timer
             if self.bus.base.inWaiting() > 0:
                 address = None
                 packet = RoverPacket.from_rx(self.bus.base)  # Retreive bytearray
@@ -34,9 +41,11 @@ class Listener(threading.Thread):
                     flushAll()
                     RoverPacket.checksum_error = 0
                     continue
-
                 if packet.addr == 1:
                     address = 'beaglebone'
+                    if packet.content[0] == 17:
+                    	self.roverStatus.roverAlive = 1
+                    	intervalAlive_start = time.time() # Reset roverAlive timer
                 elif (packet.addr >= 2) and (packet.addr <= 7):
                     address = 'drive'
                     self.roverStatus.wheel_commands[packet.addr - 2]['velo'] = packet.content[0]
@@ -49,17 +58,6 @@ class Listener(threading.Thread):
                     address = 'mux'
                 elif packet.addr == 11:
                     address = 'package'
-
-                addr = packet.addr
-                packet = packet.msg()
-                self.queue.put([address, addr, packet])
-
-    def unpack_packet(self):
-        temp = RoverPacket.from_rx(self.bus.base)  # Retreive bytearray
-        packet = []
-        packet.append(temp.addr)
-        packet = packet + list(temp.content)
-        return packet
 
     def flushAll(self):
         bus.base.flushInput()
