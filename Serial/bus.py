@@ -16,7 +16,7 @@ class Bus(object):
                                         baudrate=115200)
                 self.tripod = serial.Serial(port='/dev/ttyO2',
                                         baudrate=115200)
-                self.motor = serial.Serial(port='/dev/ttyO4',
+                self.drive = serial.Serial(port='/dev/ttyO4',
                                         baudrate=115200)
 
 	def restart(self, bus_name):
@@ -32,12 +32,12 @@ class Bus(object):
                         self.tripod.close()
                         self.tripod = serial.Serial(port='/dev/ttyO2',
                                         baudrate=115200)
-		elif bus_name=='motor':
-                        self.motor.close()
-                        self.motor = serial.Serial(port='/dev/ttyO4',
+		elif bus_name=='drive':
+                        self.drive.close()
+                        self.drive = serial.Serial(port='/dev/ttyO4',
                                         baudrate=115200)
 		elif bus_name=='all':
                         self.restart('base')
-			self.restart('motor')
+			self.restart('drive')
 			self.restart('tripod')
 			self.restart('arm')

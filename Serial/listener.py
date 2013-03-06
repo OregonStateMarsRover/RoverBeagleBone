@@ -14,28 +14,42 @@ from roverpacket import *
 from bus import *
 
 class Listener(threading.Thread):
-	def __init__(self, bus, queue):
+	def __init__(self, bus, queue, RoverStatus):
 		# Initializes threading
 		threading.Thread.__init__(self)
 		# Stores the bus and queue objects
 		self.bus = bus
 		self.queue = queue
+		self.roverStatus = RoverStatus
 
 	def run(self):
 		print "Running Listener"
 		while 1:
 			if self.bus.base.inWaiting() > 0:
-				#packet = self.unpack_packet()
+				address = None
 				packet = RoverPacket.from_rx(self.bus.base)	# Retreive bytearray
 				if RoverPacket.checksum_error == 1:
 					flushAll()
 					RoverPacket.checksum_error = 0
 					continue
-				print "inWaiting(): " + str(self.bus.base.inWaiting())
-#				print packet					# Print Raw Packet
+
+				if packet.addr == 1):
+					address = 'beaglebone'
+				elif (packet.addr >= 2) or (packet.addr <= 7):
+					address = 'drive'
+					self.roverStatus.wheel_commands[packet.addr - 2]['velo'] = packet.content[0]
+					self.roverStatus.wheel_commands[packet.addr - 2]['angle'] = packet.content[1]
+				elif packet.addr == 8):
+					address = 'arm'
+				elif packet.addr == 9):
+					address = 'tripod'
+				elif packet.addr == 10):
+					address = 'mux'
+				elif packet.addr == 11):
+					address = 'package'
+
 				packet = packet.msg()
-				#print packet					# Print packet.msg()
-				self.queue.put(packet)
+				self.queue.put([address, packet])
 
 	def unpack_packet(self):
 		temp = RoverPacket.from_rx(self.bus.base)	# Retreive bytearray
