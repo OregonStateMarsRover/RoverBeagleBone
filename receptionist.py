@@ -48,22 +48,22 @@ class Receptionist(object):
 			self.bbcount = self.bbcount + 1
 			print "BeagleBone packet %d received!" % self.bbcount
 		if packet[0] == 'drive':
-			self.count = self.drivecount + 1
+			self.drivecount = self.drivecount + 1
 			print "Drive packet %d received!" % self.drivecount
 		elif packet[0] == 'arm':
-			self.count = self.armcount + 1
+			self.armcount = self.armcount + 1
 			print "Arm packet %d received!" % self.armcount
 			self.bus.arm.write(packet[1])
 		elif packet[0] == 'tripod':
-			self.count = self.tripodcount + 1
+			self.tripodcount = self.tripodcount + 1
 			print "Tripod packet %d received!" % self.tripodcount
 			self.bus.tripod.write(packet[1])
 		elif packet[0] == 'mux':
-			self.count = self.muxcount + 1
+			self.muxcount = self.muxcount + 1
 			print "MUX packet %d received!" % self.muxcount
 #			self.bus.mux.write(packet[1])
 		elif packet[0] == 'package':
-			self.count = self.packagecount + 1
+			self.packagecount = self.packagecount + 1
 			print "Package packet %d received!" % self.packagecount
 #			self.bus.package.write(packet[1])
 
