@@ -9,6 +9,7 @@
 
 class RoverPacket(object):
     checksum_error = 0
+    unexpectedcontrolchar_error = 0
     start_byte = 0xCA
     escape_byte = 0x5C
     null_byte = 0x00
@@ -51,6 +52,7 @@ class RoverPacket(object):
             elif byte in self.escaped_bytes.keys():
                 #raise Exception("Error: unexpected control character was seen without preceding escape character")
                 print "Error: unexpected control character was seen without preceding escape character"
+                self.unexpectedcontrolchar_error = 1
             else:
                 content.append(byte)
         return content
