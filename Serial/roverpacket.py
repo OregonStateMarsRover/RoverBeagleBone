@@ -49,7 +49,8 @@ class RoverPacket(object):
             elif byte == self.escape_byte:
                 next_byte_escaped = True
             elif byte in self.escaped_bytes.keys():
-                raise Exception("Error: unexpected control character was seen without preceding escape character")
+                #raise Exception("Error: unexpected control character was seen without preceding escape character")
+                print "Error: unexpected control character was seen without preceding escape character"
             else:
                 content.append(byte)
         return content
@@ -64,7 +65,8 @@ class RoverPacket(object):
     def rx(self, port):
         """receive a rover protocol packet on "port." There should be bytes already waiting on the port when this function is called"""
         if (not port.inWaiting()):
-            raise Exception("Error: no bytes waiting on port")
+            #raise Exception("Error: no bytes waiting on port")
+            print "Error: no bytes waiting on port"
         start = int(port.read().encode("hex"), 16)
 
         if start != self.start_byte:

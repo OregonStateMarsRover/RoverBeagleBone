@@ -28,6 +28,7 @@ class Receptionist(object):
         self.tripodcount = 0
         self.muxcount = 0
         self.packagecount = 0
+
         self.bus = Bus()
         self.commands_queue = Queue.Queue()
         self.roverStatus = RoverStatus
@@ -42,7 +43,7 @@ class Receptionist(object):
     def start(self):
         print "Starting Receptionist"
         # Flush ALL buffers before doing anything
-        flush_all_buffers()
+        self.flush_all_buffers()
         while 1:
             if self.commands_queue.empty() is False:
                 packet = self.commands_queue.get()
@@ -80,14 +81,14 @@ class Receptionist(object):
 #			self.bus.package.write(packet[2])
 
     def flush_all_buffers(self):
-        bus.base.flushInput()
-        bus.base.flushOutput()
-        bus.arm.flushInput()
-        bus.arm.flushOutput()
-        bus.tripod.flushInput()
-        bus.tripod.flushOutput()
-        bus.drive.flushInput()
-        bus.drive.flushOutput()
+        self.bus.base.flushInput()
+        self.bus.base.flushOutput()
+        self.bus.arm.flushInput()
+        self.bus.arm.flushOutput()
+        self.bus.tripod.flushInput()
+        self.bus.tripod.flushOutput()
+        self.bus.drive.flushInput()
+        self.bus.drive.flushOutput()
 
 if __name__ == '__main__':
     receptionist = Receptionist()

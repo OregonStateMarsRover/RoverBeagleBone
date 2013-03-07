@@ -25,11 +25,13 @@ class Queuer(threading.Thread):
                 drive_commands = self.poll_drive_command()
                 drive_commands = self.assemble_drive_packet(drive_commands)
                 for command in drive_commands:
+                    command = ['drive', command[1], command]
                     self.receptionist_queue.put(command)
             elif self.roverStatus.roverAlive == 0:
                 # Make Rover STOP Immediately - Connection has been lost
-                drive_commands = self.assemble_stop_drive_packet()
+                drive_commands = self.assemble_stop_drive_packets()
                 for command in drive_commands:
+                    command = ['drive', command[1], command]
                     self.receptionist_queue.put(command)
             time.sleep(self.waitTime)
 
@@ -42,7 +44,7 @@ class Queuer(threading.Thread):
                 packet_list.append(packet)
         return packet_list
 
-    def assemble_stop_drive_packet(self):
+    def assemble_stop_drive_packets(self):
         packet_list = []
         for wheelAddr in range(2,8):
                 packet = BogiePacket(wheelAddr, 0, 0)
