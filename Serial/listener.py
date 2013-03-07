@@ -24,43 +24,43 @@ class Listener(threading.Thread):
         self.bus = bus
         self.queue = queue
         self.roverStatus = RoverStatus
+        self.roverTimeout = 2  # Seconds to wait before killing the rover
 
     def run(self):
         print "Running Listener"
-        intervalAlive_start = time.time() # Start timer to catch roverAlive messages
+        intervalAlive_start = time.time()  # Start timer to catch roverAlive messages
         while 1:
-		packet = None
-        	if (time.time() - intervalAlive_start) > 4: # If it has been 4 seconds since hearing from the rover
-        		self.roverStatus.roverAlive = 0
-        		intervalAlive_start = time.time() # Reset roverAlive timer
-            	if self.bus.base.inWaiting() > 0:
-                	address = None
-                	packet = RoverPacket.from_rx(self.bus.base)  # Retreive bytearray
-	                if RoverPacket.checksum_error == 1:
-	                    flushAll()
-	                    RoverPacket.checksum_error = 0
-	                    continue
-	                if packet.addr == 1:
-	                    address = 'beaglebone'
-	                    if packet.content[0] == 17:
-	                    	self.roverStatus.roverAlive = 1
-	                    	intervalAlive_start = time.time() # Reset roverAlive timer
-	                elif (packet.addr >= 2) and (packet.addr <= 7):
-	                    address = 'drive'
-	                    self.roverStatus.wheel_commands[packet.addr - 2]['velo'] = packet.content[0]
-	                    self.roverStatus.wheel_commands[packet.addr - 2]['angle'] = packet.content[1]
-	                elif packet.addr == 8:
-	                    address = 'arm'
-	                elif packet.addr == 9:
-	                    address = 'tripod'
-	                elif packet.addr == 10:
-	                    address = 'mux'
-	                elif packet.addr == 11:
-	                    address = 'package'
-
-    def flushAll(self):
-        bus.base.flushInput()
-        print "Flushed Base Input Buffer"
+            packet = None
+            if (time.time() - intervalAlive_start) > self.roverTimeout:
+                self.roverStatus.roverAlive = 0
+                print "LOST ROVER SIGNAL!!!"
+                intervalAlive_start = time.time()  # Reset roverAlive timer
+            if self.bus.base.inWaiting() > 0:
+                packet = RoverPacket.from_rx(self.bus.base)  # Retreive bytearray
+                if RoverPacket.checksum_error == 1:
+                    bus.base.flushInput()
+                    print "Flushed Base Input Buffer"
+                    RoverPacket.checksum_error = 0
+                    continue
+                if packet.addr == 1:
+                    # BeagleBone
+                    if packet.content[0] == 17:
+                        self.roverStatus.roverAlive = 1
+                        print "We see the rover!"
+                        self.queue.put(['beaglebone'])
+                        intervalAlive_start = time.time()  # Reset roverAlive timer
+                elif (packet.addr >= 2) and (packet.addr <= 7):
+                    # Drive
+                    self.roverStatus.wheel_commands[packet.addr - 2]['velo'] = packet.content[0]
+                    self.roverStatus.wheel_commands[packet.addr - 2]['angle'] = packet.content[1]
+                #elif packet.addr == 8:
+                    # Arm
+                #elif packet.addr == 9:
+                    # Tripod
+                #elif packet.addr == 10:
+                    # MUX
+                #elif packet.addr == 11:
+                    # Package
 
     def emergencyStop(self):
         wheel = [2, 3, 4, 5, 6, 7]
