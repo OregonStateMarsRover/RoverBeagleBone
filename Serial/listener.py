@@ -42,11 +42,15 @@ class Listener(threading.Thread):
                     print "Flushed Base Input Buffer"
                     RoverPacket.checksum_error = 0
                     continue
+                if RoverPacket.unexpectedcontrolchar_error == 1:
+                    bus.base.flushInput()
+                    print "Flushed Base Input Buffer"
+                    RoverPacket.unexpectedcontrolchar_error = 0
+                    continue
                 if packet.addr == 1:
                     # BeagleBone
                     if packet.content[0] == 17:
                         self.roverStatus.roverAlive = 1
-                        print "We see the rover!"
                         self.queue.put(['beaglebone'])
                         intervalAlive_start = time.time()  # Reset roverAlive timer
                 elif (packet.addr >= 2) and (packet.addr <= 7):
