@@ -50,6 +50,9 @@ Initializations
 	d) cd into the newly expanded directory pyserial-2.6 and type:
 		sudo python setup.py install
 	e) You have installed pySerial!
+4) Disable refreshing of /dev/ttyO0 on the BeagleBone to allow for using that port as a serial communication only port.
+	a) Type, "nano /etc/init/serial.conf"
+	b) Replace the line that says "exec /sbin/getty 115200 ttyO0" with "#exec /sbin/getty 115200 ttyO0"
 
 ## General
 ### 1) How to setup an SSH connection between your Ubuntu laptop and the BeagleBone
