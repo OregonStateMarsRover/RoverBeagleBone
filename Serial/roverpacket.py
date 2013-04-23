@@ -1,7 +1,7 @@
-#	roverpacket.py
-#	Author: Mike Fortner
-#	This file defines the packet protocol used on the 2013 mars rover.
-#	new RoverPackets can be made directly from strings or lists of byte values, or they can be read from a serial port with RoverPacket.from_rx(port)
+#   roverpacket.py
+#   Author: Mike Fortner
+#   This file defines the packet protocol used on the 2013 mars rover.
+#   new RoverPackets can be made directly from strings or lists of byte values, or they can be read from a serial port with RoverPacket.from_rx(port)
 #
 #
 #
@@ -10,6 +10,7 @@
 class RoverPacket(object):
     checksum_error = 0
     unexpectedcontrolchar_error = 0
+    start_byte_error = 0
     start_byte = 0xCA
     escape_byte = 0x5C
     null_byte = 0x00
@@ -67,14 +68,12 @@ class RoverPacket(object):
     def rx(self, port):
         """receive a rover protocol packet on "port." There should be bytes already waiting on the port when this function is called"""
         if (not port.inWaiting()):
-            #raise Exception("Error: no bytes waiting on port")
-            print "Error: no bytes waiting on port"
+            raise Exception("Error: no bytes waiting on port")
         start = int(port.read().encode("hex"), 16)
 
         if start != self.start_byte:
-            print "start byte error %s != %s" % (start, self.start_byte)
-            self.checksum_error = 1
-            # raise Exception("start byte error %s != %s"%(start, self.start_byte))
+            raise Exception("start byte error %s != %s" % (start, self.start_byte))
+            self.start_byte_error = 1
         self.addr = int(port.read().encode("hex"), 16)
         length = int(port.read().encode("hex"), 16)
         escaped_content = bytearray(port.read(length - 1))
@@ -117,7 +116,7 @@ class RoverPacket(object):
 
 class BogiePacket(RoverPacket):
     def __init__(self, addr, speed, turning):
-        content = [speed, turning]
+        content = [int(speed), int(turning)]
         RoverPacket.__init__(self, addr, content)
 
     @classmethod
@@ -126,4 +125,69 @@ class BogiePacket(RoverPacket):
         new.rx(port)
         if (len(new.content) != 2):
             raise Exception("Bogie packet contents had unexpected length of %d" % len(new))
+        return new
+
+class ArmPacketLong(RoverPacket):
+    def __init__(self, addr, secaddr, angle1, angle2):
+        content = [int(secaddr), int(angle1), int(angle2)]
+        RoverPacket.__init__(self, addr, content)
+
+    @classmethod
+    def from_rx(cls, port):
+        new = cls(0, 0, 0)
+        new.rx(port)
+        if (len(new.content) != 3):
+            raise Exception("Arm packet long contents had unexpected length of %d" % len(new))
+        return new
+
+class ArmPacketShort(RoverPacket):
+    def __init__(self, addr, secaddr, data):
+        content = [int(secaddr), int(data)]
+        RoverPacket.__init__(self, addr, content)
+
+    @classmethod
+    def from_rx(cls, port):
+        new = cls(0, 0, 0)
+        new.rx(port)
+        if (len(new.content) != 2):
+            raise Exception("Arm packet short contents had unexpected length of %d" % len(new))
+        return new
+
+class TripodPacket(RoverPacket):
+    def __init__(self, addr, secaddr, angle):
+        content = [int(secaddr), int(angle)]
+        RoverPacket.__init__(self, addr, content)
+
+    @classmethod
+    def from_rx(cls, port):
+        new = cls(0, 0, 0)
+        new.rx(port)
+        if (len(new.content) != 2):
+            raise Exception("Tripod packet contents had unexpected length of %d" % len(new))
+        return new
+
+class MuxPacket(RoverPacket):
+    def __init__(self, addr, mux_cam):
+        content = [int(mux_cam)]
+        RoverPacket.__init__(self, addr, content)
+
+    @classmethod
+    def from_rx(cls, port):
+        new = cls(0, 0, 0)
+        new.rx(port)
+        if (len(new.content) != 1):
+            raise Exception("MUX packet contents had unexpected length of %d" % len(new))
+        return new
+
+class PackagePacket(RoverPacket):
+    def __init__(self, addr, package_select):
+        content = [int(package_select)]
+        RoverPacket.__init__(self, addr, content)
+
+    @classmethod
+    def from_rx(cls, port):
+        new = cls(0, 0, 0)
+        new.rx(port)
+        if (len(new.content) != 1):
+            raise Exception("Package packet contents had unexpected length of %d" % len(new))
         return new

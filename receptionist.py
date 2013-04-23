@@ -9,15 +9,18 @@
 import sys
 sys.path.append('/home/ubuntu/RoverBeagleBone/Serial')
 sys.path.append('/home/ubuntu/RoverBeagleBone/core')
+sys.path.append('/home/ubuntu/RoverBeagleBone/debug')
 import serial
 import time
 import Queue
 import threading
+from threading import Lock
 from roverpacket import *
 from bus import *
 from listener import *
 from queuer import *
 from rover_status import *
+from debugTerminalStates import *
 
 
 class Receptionist(object):
@@ -29,24 +32,37 @@ class Receptionist(object):
         self.muxcount = 0
         self.packagecount = 0
 
+        # Create Mutex's
+        self.roverStatusMutex = Lock()
+        self.queueMutex = Lock()
+
         self.bus = Bus()
         self.commands_queue = Queue.Queue()
         self.roverStatus = RoverStatus
         # This listener, listens to every port and adds messages to the queue
-        self.listenerthread = Listener(self.bus, self.commands_queue, RoverStatus)
+        self.listenerthread = Listener(self.bus, self.roverStatusMutex, self.queueMutex, self.commands_queue, RoverStatus)
         self.listenerthread.start()
         # The Queuer, reads roverStatus for commands, then assembles packets for receptionist to send
         # to all of the modules based on those commands
-        self.queuerthread = Queuer(self.commands_queue, RoverStatus)
+        self.queuerthread = Queuer(self.roverStatusMutex, self.queueMutex, self.commands_queue, RoverStatus)
         self.queuerthread.start()
+        # The Debug Terminal States, reads roverStatus and displays the changing values on the Terminal
+        # for debugging purposes
+        self.debugthread = debugTerminalStates(self.roverStatusMutex, RoverStatus)
+        self.debugthread.start()
+
 
     def start(self):
         print "Starting Receptionist"
         # Flush ALL buffers before doing anything
         self.flush_all_buffers()
+        self.flush_all_buffers()
+        self.flush_all_buffers()
+        self.flush_all_buffers()
         while 1:
             if self.commands_queue.empty() is False:
-                packet = self.commands_queue.get()
+                with self.queueMutex:
+                    packet = self.commands_queue.get()
                 self.onrover_send_data(packet)
 
             # if self.rover_queue.empty() is False:
@@ -57,28 +73,28 @@ class Receptionist(object):
         # send it and then sends it
         if packet[0] == 'beaglebone':
             self.bbcount = self.bbcount + 1
-            print "BeagleBone packet %d received!" % self.bbcount
+            #print "BeagleBone packet %d received!" % self.bbcount
         if packet[0] == 'drive':
             self.drivecount = self.drivecount + 1
             addr = packet[1]
             velo = self.roverStatus.wheel_commands[packet[1] - 2]['velo']
             angle = self.roverStatus.wheel_commands[packet[1] - 2]['angle']
-            print "Drive", self.drivecount, "-", addr, velo, angle
+            #print "Drive", self.drivecount, "-", addr, velo, angle
         elif packet[0] == 'arm':
             self.armcount = self.armcount + 1
-            print "Arm %d" % self.armcount
+            #print "Arm %d" % self.armcount
             self.bus.arm.write(packet[2])
         elif packet[0] == 'tripod':
             self.tripodcount = self.tripodcount + 1
-            print "Tripod %d" % self.tripodcount
+            #print "Tripod %d" % self.tripodcount
             self.bus.tripod.write(packet[2])
         elif packet[0] == 'mux':
             self.muxcount = self.muxcount + 1
-            print "MUX %d" % self.muxcount
+            #print "MUX %d" % self.muxcount
 #			self.bus.mux.write(packet[2])
         elif packet[0] == 'package':
             self.packagecount = self.packagecount + 1
-            print "Package %d" % self.packagecount
+            #print "Package %d" % self.packagecount
 #			self.bus.package.write(packet[2])
 
     def flush_all_buffers(self):

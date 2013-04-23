@@ -8,31 +8,39 @@
 
 import time
 import threading
+from threading import Lock
 from roverpacket import *
 from bus import *
 
 class Queuer(threading.Thread):
-    def __init__(self, receptionist_queue, roverStatus):
+    def __init__(self, roverStatusMutex, queueMutex, receptionist_queue, roverStatus):
         threading.Thread.__init__(self)
         self.receptionist_queue = receptionist_queue
         self.roverStatus = roverStatus
         self.waitTime = 0.1  # Wait 20ms between packet cycles
+        # Save Mutex's
+        self.roverStatusMutex = roverStatusMutex
+        self.queueMutex = queueMutex
 
     def run(self):
         while 1:
-            if self.roverStatus.roverAlive == 1:
+            with self.roverStatusMutex:
+                roverAlive = self.roverStatus.roverAlive
+            if roverAlive == 1:
                 # Make Drive Commands
                 drive_commands = self.poll_drive_command()
                 drive_commands = self.assemble_drive_packet(drive_commands)
                 for command in drive_commands:
                     command = ['drive', command[1], command]
-                    self.receptionist_queue.put(command)
-            elif self.roverStatus.roverAlive == 0:
+                    with self.queueMutex:
+                        self.receptionist_queue.put(command)
+            elif roverAlive == 0:
                 # Make Rover STOP Immediately - Connection has been lost
                 drive_commands = self.assemble_stop_drive_packets()
                 for command in drive_commands:
                     command = ['drive', command[1], command]
-                    self.receptionist_queue.put(command)
+                    with self.queueMutex:
+                        self.receptionist_queue.put(command)
             time.sleep(self.waitTime)
 
     def assemble_drive_packet(self, drive_commands):
@@ -57,8 +65,9 @@ class Queuer(threading.Thread):
         # (wheelAddr, velocity, angle)
         command_list = []
         for wheelAddr in range(2, 8):
-            velocity = self.roverStatus.wheel_commands[wheelAddr - 2]['velo']
-            angle = self.roverStatus.wheel_commands[wheelAddr - 2]['angle']
+            with self.roverStatusMutex:
+                velocity = self.roverStatus.wheel_commands[wheelAddr - 2]['velo']
+                angle = self.roverStatus.wheel_commands[wheelAddr - 2]['angle']
             cmd = wheelAddr, velocity, angle
             command_list.append(cmd)
 
