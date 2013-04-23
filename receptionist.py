@@ -60,24 +60,25 @@ class Receptionist(object):
             print "BeagleBone packet %d received!" % self.bbcount
         if packet[0] == 'drive':
             self.drivecount = self.drivecount + 1
-            print "Drive packet ", self.drivecount, " received! - Address: ", packet[1], \
-                "Speed: ", self.roverStatus.wheel_commands[packet[1] - 2]['velo'], \
-                " Angle: ", self.roverStatus.wheel_commands[packet[1] - 2]['angle']
+            addr = packet[1]
+            velo = self.roverStatus.wheel_commands[packet[1] - 2]['velo']
+            angle = self.roverStatus.wheel_commands[packet[1] - 2]['angle']
+            print "Drive", self.drivecount, "-", addr, velo, angle
         elif packet[0] == 'arm':
             self.armcount = self.armcount + 1
-            print "Arm packet %d received!" % self.armcount
+            print "Arm %d" % self.armcount
             self.bus.arm.write(packet[2])
         elif packet[0] == 'tripod':
             self.tripodcount = self.tripodcount + 1
-            print "Tripod packet %d received!" % self.tripodcount
+            print "Tripod %d" % self.tripodcount
             self.bus.tripod.write(packet[2])
         elif packet[0] == 'mux':
             self.muxcount = self.muxcount + 1
-            print "MUX packet %d received!" % self.muxcount
+            print "MUX %d" % self.muxcount
 #			self.bus.mux.write(packet[2])
         elif packet[0] == 'package':
             self.packagecount = self.packagecount + 1
-            print "Package packet %d received!" % self.packagecount
+            print "Package %d" % self.packagecount
 #			self.bus.package.write(packet[2])
 
     def flush_all_buffers(self):

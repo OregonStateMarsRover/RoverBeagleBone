@@ -57,14 +57,21 @@ class Listener(threading.Thread):
                     # Drive
                     self.roverStatus.wheel_commands[packet.addr - 2]['velo'] = packet.content[0]
                     self.roverStatus.wheel_commands[packet.addr - 2]['angle'] = packet.content[1]
-                #elif packet.addr == 8:
+                elif packet.addr == 8:
                     # Arm
-                #elif packet.addr == 9:
+                    pass
+                elif packet.addr == 9:
+                    # Wrist
+                    pass
+                elif packet.addr == 10:
                     # Tripod
-                #elif packet.addr == 10:
+                    pass
+                elif packet.addr == 11:
                     # MUX
-                #elif packet.addr == 11:
+                    pass
+                elif packet.addr == 12:
                     # Package
+                    pass
 
     def emergencyStop(self):
         wheel = [2, 3, 4, 5, 6, 7]
