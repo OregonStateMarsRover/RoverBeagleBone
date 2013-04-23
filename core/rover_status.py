@@ -8,23 +8,28 @@
 import math
 
 class RoverStatus():
+    # Error Tracking
+    checksum_errors  = 0
+    unexpectedcontrolchar_errors = 0
+    start_byte_errors = 0
+
     roverAlive = 0
 
-    wheel = [{}, {}, {}, {}, {}, {}]
+    wheel_commands = [{}, {}, {}, {}, {}, {}]
 
-    wheel[0]['angle'] = 0
-    wheel[1]['angle'] = 0
-    wheel[2]['angle'] = 0
-    wheel[3]['angle'] = 0
-    wheel[4]['angle'] = 0
-    wheel[5]['angle'] = 0
+    wheel_commands[0]['angle'] = 0
+    wheel_commands[1]['angle'] = 0
+    wheel_commands[2]['angle'] = 0
+    wheel_commands[3]['angle'] = 0
+    wheel_commands[4]['angle'] = 0
+    wheel_commands[5]['angle'] = 0
 
-    wheel[0]['velo'] = 0
-    wheel[1]['velo'] = 0
-    wheel[2]['velo'] = 0
-    wheel[3]['velo'] = 0
-    wheel[4]['velo'] = 0
-    wheel[5]['velo'] = 0
+    wheel_commands[0]['velo'] = 0
+    wheel_commands[1]['velo'] = 0
+    wheel_commands[2]['velo'] = 0
+    wheel_commands[3]['velo'] = 0
+    wheel_commands[4]['velo'] = 0
+    wheel_commands[5]['velo'] = 0
 
     ####### ARM CONTROL STATES #######
 
@@ -47,6 +52,7 @@ class RoverStatus():
 
     scoop_toggle = False
     voltage_toggle = False
+    voltage_fresh_data = False
     voltage = 0
 
     ####### TRIPOD CONTROL STATES #######
@@ -57,6 +63,7 @@ class RoverStatus():
     ####### SCIENCE PROBE CONTROL STATES #######
     probe_toggle = False
     probe_distance = 0
+    probe_fresh_data = False
 
     soil_moisture = 0
     conductivity = 0
@@ -73,3 +80,9 @@ class RoverStatus():
 
     ####### MUX CONTROL STATES #######
     mux_cam = 1 # 1-4 - Default is 1 "Main Camera"
+
+    def TogglePackage(self, package):
+        # package is ints 1-6
+        packages = ["package_one", "package_two", "package_three"]
+        packages += ["package_four", "package_five"]
+        packages[package+1] = True

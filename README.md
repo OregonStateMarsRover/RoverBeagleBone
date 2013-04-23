@@ -25,6 +25,8 @@ Detailed instructions can be found in the README.txt file in this repo
     nano /etc/init/serial.conf
     ## Replace the line that says "exec /sbin/getty 115200 ttyO0" with "#exec /sbin/getty 115200 ttyO0"
 
+
+
 ## General
 ### 1) Setup SSH from BeagleBone to Laptop directly, without a network switch. (Details in README.txt)
 ### 2) If BeagleBone is not attached to an internet connection, but just through SSH, you can transfer files with scp. (Details in README.txt)
