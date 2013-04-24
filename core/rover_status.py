@@ -48,7 +48,7 @@ class RoverStatus():
     arm_elbow = 0.0
 
     wrist_angle = 0.0
-    wrist_tilt = 0.0  # From -90 to 90
+    wrist_tilt = 0.0 
 
     scoop_toggle = False
     voltage_toggle = False
