@@ -102,7 +102,10 @@ class Listener(threading.Thread):
                         elif secAddr == 3:
                             # Scoop Actuate
                             scoop_toggle = packet.content[1]
-                            self.roverStatus.scoop_toggle = scoop_toggle
+                            if scoop_toggle == 1:
+                                self.roverStatus.scoop_toggle = True
+                            elif scoop_toggle == 0:
+                                self.roverStatus.scoop_toggle = False
                         elif secAddr == 4:
                             # Probe Actuate
                             probe_distance = packet.content[1]
@@ -110,11 +113,17 @@ class Listener(threading.Thread):
                         elif secAddr == 5:
                             # Probe Get Data
                             probe_toggle = packet.content[1]
-                            self.roverStatus.probe_toggle = probe_toggle
+                            if probe_toggle == 1:
+                                self.roverStatus.probe_toggle = True
+                            elif probe_toggle == 0:
+                                self.roverStatus.probe_toggle = False
                         elif secAddr == 6:
                             # Get Voltage
                             voltage_toggle = packet.content[1]
-                            self.roverStatus.voltage_toggle = voltage_toggle
+                            if voltage_toggle == 1:
+                                self.roverStatus.voltage_toggle = True
+                            elif voltage_toggle == 0:
+                                self.roverStatus.voltage_toggle = False
                     elif packet.addr == 10:
                         # Tripod
                         secAddr = packet.content[0]
@@ -136,7 +145,16 @@ class Listener(threading.Thread):
                     elif packet.addr == 12:
                         # Package
                         package_select = packet.content[0]
-                        self.roverStatus.packages[package_select-1] = True
+                        if package_select == 1:
+                            self.roverStatus.package_one = True
+                        elif package_select == 2:
+                            self.roverStatus.package_two = True
+                        elif package_select == 3:
+                            self.roverStatus.package_three = True
+                        elif package_select == 4:
+                            self.roverStatus.package_four = True
+                        elif package_select == 5:
+                            self.roverStatus.package_five = True
 
     def emergencyStop(self):
         wheel = [2, 3, 4, 5, 6, 7]
