@@ -1,0 +1,18 @@
+1) Clean up orphaned threads
+2) Create bus place for all modules
+3) Have queuer create and send all states
+4) Currently the listener will flushBaseInput if an error is found from roverPacket. But it then proceeds with the execution of the packet. This could cause problems, so keep an eye on it, and if it does cause issues, then a possible solution is to flushBaseInput, but then return to the top of the loop to pull a new packet without having processed the previous one
+5) When the system crashes, auto-restart
+6) Create a logging system that saves log files into log/
+7) Assemble/send packets of Arm
+8) Assemble/send packets of Tripod
+9) Alssemble/send packets of MUX
+10) Assemble/send packets of Packages
+11) Assemble/send packets of Soil Probe
+12) Write intToArmByte to change a 0-360 degree angle into a Byte data
+
+
+DONE
+1) Add mutex's to roverStatus and queue
+2) See if there is an issue with roverpacket assembly
+3) 
