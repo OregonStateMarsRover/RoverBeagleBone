@@ -72,6 +72,8 @@ class RoverStatus():
     c_temp = 0
 
     ####### PACKAGE CONTROL STATES #######
+    packages = ["package_one", "package_two", "package_three"]
+    packages += ["package_four", "package_five"]
     package_one = False
     package_two = False
     package_three = False
@@ -80,9 +82,3 @@ class RoverStatus():
 
     ####### MUX CONTROL STATES #######
     mux_cam = 1 # 1-4 - Default is 1 "Main Camera"
-
-    def TogglePackage(self, package):
-        # package is ints 1-6
-        packages = ["package_one", "package_two", "package_three"]
-        packages += ["package_four", "package_five"]
-        packages[package+1] = True

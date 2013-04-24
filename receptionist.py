@@ -63,7 +63,7 @@ class Receptionist(object):
             if self.commands_queue.empty() is False:
                 with self.queueMutex:
                     packet = self.commands_queue.get()
-                self.onrover_send_data(packet)
+                #self.onrover_send_data(packet)
 
             # if self.rover_queue.empty() is False:
             #	# Do Something
