@@ -43,6 +43,7 @@ class Listener(threading.Thread):
                 intervalAlive_start = time.time()  # Reset roverAlive timer
             if self.bus.base.inWaiting() > 0:
                 packet = RoverPacket.from_rx(self.bus.base)  # Retreive bytearray
+                #print packet
                 if RoverPacket.checksum_error == 1:
                     bus.base.flushInput()
                     print "Flushed Base Input Buffer"
@@ -135,7 +136,7 @@ class Listener(threading.Thread):
                     elif packet.addr == 12:
                         # Package
                         package_select = packet.content[0]
-                        self.roverStatus.TogglePackage(self.roverStatus, package_select)
+                        self.roverStatus.packages[package_select-1] = True
 
     def emergencyStop(self):
         wheel = [2, 3, 4, 5, 6, 7]
