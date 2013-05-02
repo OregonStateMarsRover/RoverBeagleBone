@@ -17,7 +17,7 @@ class Queuer(threading.Thread):
         threading.Thread.__init__(self)
         self.receptionist_queue = receptionist_queue
         self.roverStatus = roverStatus
-        self.waitTime = 0.1  # Wait 20ms between packet cycles
+        self.waitTime = 0.02  # Wait 20ms between packet cycles
         # Save Mutex's
         self.roverStatusMutex = roverStatusMutex
         self.queueMutex = queueMutex

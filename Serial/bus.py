@@ -11,7 +11,7 @@ import serial
 
 class Bus(object):
     def __init__(self):
-        self.base = serial.Serial(port='/dev/ttyO0',
+        self.base = serial.Serial(port='/dev/ttyO5',
                                   baudrate=115200)
         self.arm = serial.Serial(port='/dev/ttyO1',
                                  baudrate=115200)

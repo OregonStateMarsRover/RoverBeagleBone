@@ -63,7 +63,7 @@ class Receptionist(object):
             if self.commands_queue.empty() is False:
                 with self.queueMutex:
                     packet = self.commands_queue.get()
-                #self.onrover_send_data(packet)
+                self.onrover_send_data(packet)
 
             # if self.rover_queue.empty() is False:
             #	# Do Something
@@ -79,7 +79,9 @@ class Receptionist(object):
             addr = packet[1]
             velo = self.roverStatus.wheel_commands[packet[1] - 2]['velo']
             angle = self.roverStatus.wheel_commands[packet[1] - 2]['angle']
-            #print "Drive", self.drivecount, "-", addr, velo, angle
+            pck = packet[2]
+	    self.bus.drive.write(pck)
+	    #print "Drive", self.drivecount, "-", addr, velo, angle
         elif packet[0] == 'arm':
             self.armcount = self.armcount + 1
             #print "Arm %d" % self.armcount

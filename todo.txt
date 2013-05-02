@@ -11,6 +11,15 @@
 11) Assemble/send packets of Soil Probe
 12) Write intToArmByte to change a 0-360 degree angle into a Byte data
 
+TESTING W/ TYLER
+1) Have UART5 Initialize properly at startup
+2) Have software startup automatically
+3) Have Marshall update watchdog on wheels
+4) BUG: Press x ~30 times quickly, jult all over with the
+	velocities, and then the system suddenly becomes
+	unresponsive
+5) Create a signal that will have the BeagleBone restart
+	itself
 
 DONE
 1) Add mutex's to roverStatus and queue
