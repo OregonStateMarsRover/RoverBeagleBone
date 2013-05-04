@@ -80,10 +80,12 @@ class Receptionist(object):
             velo = self.roverStatus.wheel_commands[packet[1] - 2]['velo']
             angle = self.roverStatus.wheel_commands[packet[1] - 2]['angle']
             pck = packet[2]
-	    self.bus.drive.write(pck)
+	        self.bus.drive.write(pck)
 	    #print "Drive", self.drivecount, "-", addr, velo, angle
         elif packet[0] == 'arm':
             self.armcount = self.armcount + 1
+            pck = packet[2]
+            self.bus.arm.write(pck)
             #print "Arm %d" % self.armcount
             self.bus.arm.write(packet[2])
         elif packet[0] == 'tripod':

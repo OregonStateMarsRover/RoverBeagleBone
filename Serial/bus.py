@@ -23,7 +23,7 @@ class Bus(object):
     def restart(self, bus_name):
         if bus_name == 'base':
             self.base.close()
-            self.base = serial.Serial(port='/dev/ttyO0',
+            self.base = serial.Serial(port='/dev/ttyO5',
                                       baudrate=115200)
         elif bus_name == 'arm':
             self.arm.close()
