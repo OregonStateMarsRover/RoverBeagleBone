@@ -38,18 +38,18 @@ class Receptionist(object):
 
         self.bus = Bus()
         self.commands_queue = Queue.Queue()
-        self.roverStatus = RoverStatus
+        self.roverStatus = RoverStatus(self.roverStatusMutex, self.queueMutex)
         # This listener, listens to every port and adds messages to the queue
-        self.listenerthread = Listener(self.bus, self.roverStatusMutex, self.queueMutex, self.commands_queue, RoverStatus)
+        self.listenerthread = Listener(self.bus, self.commands_queue, self.roverStatus)
         self.listenerthread.start()
         # The Queuer, reads roverStatus for commands, then assembles packets for receptionist to send
         # to all of the modules based on those commands
-        self.queuerthread = Queuer(self.roverStatusMutex, self.queueMutex, self.commands_queue, RoverStatus)
-        self.queuerthread.start()
+#        self.queuerthread = Queuer(self.commands_queue, self.roverStatus)
+#        self.queuerthread.start()
         # The Debug Terminal States, reads roverStatus and displays the changing values on the Terminal
         # for debugging purposes
-        self.debugthread = debugTerminalStates(self.roverStatusMutex, RoverStatus)
-        self.debugthread.start()
+#        self.debugthread = debugTerminalStates(self.roverStatus)
+#        self.debugthread.start()
 
 
     def start(self):
@@ -60,9 +60,11 @@ class Receptionist(object):
         self.flush_all_buffers()
         self.flush_all_buffers()
         while 1:
+            print self.bus.base.inWaiting()
             if self.commands_queue.empty() is False:
-                with self.queueMutex:
+                with self.roverStatus.queueMutex:
                     packet = self.commands_queue.get()
+                #print packet
                 self.onrover_send_data(packet)
 
             # if self.rover_queue.empty() is False:
@@ -76,11 +78,9 @@ class Receptionist(object):
             #print "BeagleBone packet %d received!" % self.bbcount
         if packet[0] == 'drive':
             self.drivecount = self.drivecount + 1
-            addr = packet[1]
-            velo = self.roverStatus.wheel_commands[packet[1] - 2]['velo']
-            angle = self.roverStatus.wheel_commands[packet[1] - 2]['angle']
-            pck = packet[2]
-	        self.bus.drive.write(pck)
+            pck = packet[1]
+            #print repr(pck)
+            self.bus.drive.write(pck)
 	    #print "Drive", self.drivecount, "-", addr, velo, angle
         elif packet[0] == 'arm':
             self.armcount = self.armcount + 1
