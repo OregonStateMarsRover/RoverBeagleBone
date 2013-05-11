@@ -48,8 +48,8 @@ class Receptionist(object):
         self.queuerthread.start()
         # The Debug Terminal States, reads roverStatus and displays the changing values on the Terminal
         # for debugging purposes
-#        self.debugthread = debugTerminalStates(self.roverStatus)
-#        self.debugthread.start()
+        self.debugthread = debugTerminalStates(self.roverStatus)
+        self.debugthread.start()
 
 
     def start(self):
@@ -60,7 +60,6 @@ class Receptionist(object):
         self.flush_all_buffers()
         self.flush_all_buffers()
         while 1:
-            print self.bus.base.inWaiting()
             if self.commands_queue.empty() is False:
                 with self.roverStatus.queueMutex:
                     packet = self.commands_queue.get()
