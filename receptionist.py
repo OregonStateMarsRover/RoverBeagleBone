@@ -44,8 +44,8 @@ class Receptionist(object):
         self.listenerthread.start()
         # The Queuer, reads roverStatus for commands, then assembles packets for receptionist to send
         # to all of the modules based on those commands
-#        self.queuerthread = Queuer(self.commands_queue, self.roverStatus)
-#        self.queuerthread.start()
+        self.queuerthread = Queuer(self.commands_queue, self.roverStatus)
+        self.queuerthread.start()
         # The Debug Terminal States, reads roverStatus and displays the changing values on the Terminal
         # for debugging purposes
 #        self.debugthread = debugTerminalStates(self.roverStatus)
@@ -78,8 +78,8 @@ class Receptionist(object):
             #print "BeagleBone packet %d received!" % self.bbcount
         if packet[0] == 'drive':
             self.drivecount = self.drivecount + 1
-            pck = packet[1]
-            #print repr(pck)
+            addr = packet[1]
+            pck = packet[2]
             self.bus.drive.write(pck)
 	    #print "Drive", self.drivecount, "-", addr, velo, angle
         elif packet[0] == 'arm':

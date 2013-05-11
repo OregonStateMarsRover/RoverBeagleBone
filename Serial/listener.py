@@ -53,9 +53,6 @@ class Listener(threading.Thread):
                         intervalAlive_start = time.time()  # Reset roverAlive timer
                 elif (packet.addr >= 2) and (packet.addr <= 7):
                     # Drive
-                    #print repr(packet.msg())
-                    with self.roverStatus.queueMutex:
-                        self.queue.put(['drive', packet.msg()])
                     self.roverStatus.wheel_commands[packet.addr - 2]['velo'] = packet.content[0]
                     self.roverStatus.wheel_commands[packet.addr - 2]['angle'] = packet.content[1]
                 elif packet.addr == 8:
