@@ -48,7 +48,6 @@ class Listener(threading.Thread):
                 if packet.addr == 1:
                     # BeagleBone
                     if packet.content[0] == 17:
-                        print "..................................................ROVER IS ALIVE!"
                         with self.roverStatus.queueMutex:
                             self.queue.put(['beaglebone'])
                         intervalAlive_start = time.time()  # Reset roverAlive timer
