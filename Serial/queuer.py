@@ -13,44 +13,41 @@ from roverpacket import *
 from bus import *
 
 class Queuer(threading.Thread):
-    def __init__(self, roverStatusMutex, queueMutex, receptionist_queue, roverStatus):
+    def __init__(self, receptionist_queue, roverStatus):
         threading.Thread.__init__(self)
         self.receptionist_queue = receptionist_queue
         self.roverStatus = roverStatus
         self.waitTime = 0.02  # Wait 20ms between packet cycles
-        # Save Mutex's
-        self.roverStatusMutex = roverStatusMutex
-        self.queueMutex = queueMutex
 
     def run(self):
         while 1:
-            with self.roverStatusMutex:
+            with self.roverStatus.roverStatusMutex:
                 roverAlive = self.roverStatus.roverAlive
             if roverAlive == 1:
                 # Make Drive Commands
                 drive_commands = self.poll_drive_command()
-                drive_commands = self.assemble_drive_packet(drive_commands)
+                drive_commands = self.assemble_drive_packets(drive_commands)
                 for command in drive_commands:
                     command = ['drive', command[1], command]
-                    with self.queueMutex:
+                    with self.roverStatus.queueMutex:
                         self.receptionist_queue.put(command)
                 # Make Arm Commands
-                arm_commands = self.poll_drive_arm_command()
+                arm_commands = self.poll_arm_command()
                 arm_commands = self.assemble_arm_packets(arm_commands)
                 for command in arm_commands:
                     command = ['arm', command[1], command]
-                    with self.queueMutex:
+                    with self.roverStatus.queueMutex:
                         self.receptionist_queue.put(command)
             elif roverAlive == 0:
                 # Make Rover STOP Immediately - Connection has been lost
                 drive_commands = self.assemble_stop_drive_packets()
                 for command in drive_commands:
                     command = ['drive', command[1], command]
-                    with self.queueMutex:
+                    with self.roverStatus.queueMutex:
                         self.receptionist_queue.put(command)
             time.sleep(self.waitTime)
 
-    def assemble_drive_packet(self, drive_commands):
+    def assemble_drive_packets(self, drive_commands):
         packet_list = []
         for command in drive_commands:
                 wheelAddr, velocity, angle = command
@@ -81,7 +78,7 @@ class Queuer(threading.Thread):
         # (wheelAddr, velocity, angle)
         command_list = []
         for wheelAddr in range(2, 8):
-            with self.roverStatusMutex:
+            with self.roverStatus.roverStatusMutex:
                 velocity = self.roverStatus.wheel_commands[wheelAddr - 2]['velo']
                 angle = self.roverStatus.wheel_commands[wheelAddr - 2]['angle']
             cmd = wheelAddr, velocity, angle
@@ -160,3 +157,65 @@ class Queuer(threading.Thread):
         #        self.roverStatus.voltage_toggle = False # Reset Toggle
 
         return command_list
+
+    def intToByte(self, int_var):
+        # Description: Takes in an integer representation (-127 to 127) of
+        #              speed and returns the byte representation that the
+        #              bogie controllers use.
+        #              (Reverse: 0-127) (Positive: 255-128)
+        # NOTE: Does not work for RT or LT
+
+        byte_var = 0
+        if (int_var <= 0) and (int_var >= -127):
+            byte_var = abs(int_var)  # Converts 0 to -127 -> 0 to 127
+        elif (int_var >= 0) and (int_var <= 127):
+            byte_var = -(int_var) + 255  # Converts 0 to 127 -> 255 to 128
+
+        return byte_var
+
+    def intToArmByte(self, int_var):
+        # Description: Takes in an integer representation (0 to 360) of
+        #              and and returns a tuple of 2 bytes representing the
+        #              angle.
+        # Returns: (byte1, byte2)
+        #          byte1 is degrees 0 to 180, byte2 is degrees 181 to 360
+        # Example: int 268 will return the tuple (180,88). Notice 180+88=268
+
+        byte_tup = 0
+        byte1 = 0
+        byte2 = 0
+        if (int_var >= 0) and (int_var <= 180):
+            byte1 = int_var
+            byte2 = 0
+        elif (int_var >= 181) and (int_var <= 360):
+            byte1 = 180
+            byte2 = int_var - 180
+
+        byte_tup = byte1, byte2
+        return byte_tup
+
+    def armByteToInt(self, byte_tup):
+        # Description: Takes in a tuple of 2 bytes representing (0 to 360) of
+        #              and returns an integer representing the angle.
+        # Returns: integer
+        #          byte1 is degrees 0 to 180, byte2 is degrees 181 to 360
+        # Example: int 268 will return the tuple (180,88). Notice 180+88=268
+
+        byte1, byte2 = byte_tup
+        int_var = int(byte1) + int(byte2)
+
+        return int_var
+
+
+    def byteToInt(self, byte_var):
+        # Description: Takes in a byte representation (Reverse: 0-127)
+        #              (Positive: 255-128) of speed and returns the integer
+        #              representation (-127 to 127)
+
+        int_var = 0
+        if (byte_var >= 0) and (byte_var <= 127):
+            int_var = -(byte_var)  # Converts 0 to 127 -> 0 to -127
+        elif (byte_var <= 255) and (byte_var >= 128):
+            int_var = abs(byte_var - 255)  # Converts 255 to 128 -> 0 to 127
+
+        return int_var

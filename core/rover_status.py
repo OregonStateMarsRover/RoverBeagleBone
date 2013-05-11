@@ -8,12 +8,16 @@
 import math
 
 class RoverStatus():
+    def __init__(self, roverStatusMutex, queueMutex):
+        self.roverStatusMutex = roverStatusMutex
+        self.queueMutex = queueMutex
+
     # Error Tracking
     checksum_errors  = 0
     unexpectedcontrolchar_errors = 0
     start_byte_errors = 0
 
-    roverAlive = 0
+    roverAlive = 1
 
     wheel_commands = [{}, {}, {}, {}, {}, {}]
 

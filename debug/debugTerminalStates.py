@@ -6,16 +6,15 @@ import threading
 from threading import Lock
 
 class debugTerminalStates(threading.Thread):
-    def __init__(self, mutex, RoverStatus):
+    def __init__(self, roverStatus):
         # Initializes threading
         threading.Thread.__init__(self)
-        self.roverStatus = RoverStatus
-        self.mutex = mutex
+        self.roverStatus = roverStatus
 
     def run(self):
         while 1:
             os.system( [ 'clear', 'cls' ][ os.name == 'nt' ] )
-            with self.mutex:
+            with self.roverStatus.roverStatusMutex:
                 ### ERROR STATES ###
                 checksum_errors = self.roverStatus.checksum_errors
                 unexpectedcontrolchar_errors = self.roverStatus.unexpectedcontrolchar_errors
