@@ -84,7 +84,7 @@ class Receptionist(object):
         elif packet[0] == 'arm':
             self.armcount = self.armcount + 1
             pck = packet[2]
-            self.bus.arm.write(pck)
+            self.bus.drive.write(pck)
             #print "Arm %d" % self.armcount
             self.bus.arm.write(packet[2])
         elif packet[0] == 'tripod':

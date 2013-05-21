@@ -133,6 +133,42 @@ class Listener(threading.Thread):
                         self.roverStatus.package_four = True
                     elif package_select == 5:
                         self.roverStatus.package_five = True
+            self.readGPS()
+
+    def readGPS(self):
+        gprmc_id = 'GPRMC'
+
+        while 1:
+            if self.bus.gps.inWaiting() > 0:
+                byte = self.bus.gps.read(1)
+                if byte == '$':
+                    id = self.bus.gps.read(5)
+                    if id == 'GPRMC':
+                        msg = ''
+                        while 1:
+                            next = self.bus.gps.read(1)
+                            if next == '$':
+                                break
+                            msg += next
+                        msg = msg.split(',')
+
+                        # Split into variables
+			utc_time = msg[1]
+                        nav_rec_warn = msg[2]
+                        latitude = msg[3] + msg[4]
+                        longitude = msg[5] + msg[6]
+                        speed = msg[7]
+                        magnetic_variation = msg[10]
+
+                        # Update Rover Status
+                        with self.roverStatus.roverStatusMutex:
+                            self.roverStatus.utc_time = utc_time
+                            self.roverStatus.latitude = latitude
+                            self.roverStatus.longitude = longitude
+                            self.roverStatus.speed_gps = speed
+                            self.roverStatus.nav_rec_warn = nav_rec_warn
+                            self.roverStatus.magnetic_var = magnetic_variation
+
 
     def emergencyStop(self):
         wheel = [2, 3, 4, 5, 6, 7]

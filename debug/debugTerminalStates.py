@@ -64,6 +64,13 @@ class debugTerminalStates(threading.Thread):
                 package_five = self.roverStatus.package_five
                 ####### MUX STATES #######
                 mux_cam = self.roverStatus.mux_cam
+                ####### GPS STATES #######
+                utc_time = self.roverStatus.utc_time
+		latitude = self.roverStatus.latitude
+                longitude = self.roverStatus.longitude
+                speed_gps = self.roverStatus.speed_gps
+                nav_rec_warn = self.roverStatus.nav_rec_warn
+                magnetic_var = self.roverStatus.magnetic_var
 
             # DISPLAY STATES
             print "|\tBEAGLEBONE\t|",                   "          MUX\t        |"
@@ -90,13 +97,13 @@ class debugTerminalStates(threading.Thread):
             print "| Elbow:     ", arm_elbow, "\t|",    " UnexCont: ", unexpectedcontrolchar_errors, "\t|"
             print "| WristAng:  ", wrist_angle, "\t|",  " StartByt: ", start_byte_errors, "\t|"
             print "| WristTilt: ", wrist_tilt, "\t|",   "______________________|"
-            print "| ScoopActu: ", scoop_toggle, "\t|"
-            print "| ProbeActu: ", probe_distance, "\t|"
-            print "| Probe Get: ", probe_toggle, "\t|"
-            print "| Probe New: ", probe_fresh_data, "\t|"
-            print "| Volt Get:  ", voltage_toggle, "\t|"
-            print "| Volt New:  ", voltage_fresh_data, "\t|"
-            print "| Volt Val:  ", voltage, "\t|"
+            print "| ScoopActu: ", scoop_toggle, "\t|", "\t  GPS   \t|"
+            print "| ProbeActu: ", probe_distance, "\t|"," Latitude: ", latitude, "\t|"
+            print "| Probe Get: ", probe_toggle, "\t|", " Longitude: ", longitude, "\t|"
+            print "| Probe New: ", probe_fresh_data, "\t|"," Speed: ", speed_gps, "\t|"
+            print "| Volt Get:  ", voltage_toggle, "\t|"," Nav Rec Warn: ", nav_rec_warn, "\t|"
+            print "| Volt New:  ", voltage_fresh_data, "\t|"," Magnetic Var: ", magnetic_var, "\t|"
+            print "| Volt Val:  ", voltage, "\t|",      " UTC Time: ", utc_time, "\t|"
             print "|_______________________|"
             print "|        TRIPOD         |"
             print "| HoriServ: ", tri_hori, "\t\t|"
