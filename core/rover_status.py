@@ -86,3 +86,11 @@ class RoverStatus():
 
     ####### MUX CONTROL STATES #######
     mux_cam = 1 # 1-4 - Default is 1 "Main Camera"
+
+    ###### GPS DATA ######
+    utc_time = 0
+    latitude = 0
+    longitude = 0
+    speed_gps = 0
+    magnetic_var = 0
+    nav_rec_warn = 0
