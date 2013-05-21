@@ -19,7 +19,10 @@ TESTING W/ TYLER
 	velocities, and then the system suddenly becomes
 	unresponsive
 5) Create a signal that will have the BeagleBone restart
-	itself
+	itself, maybe if it hasn't heard from base in 30 seconds?
+
+TESTING BEFORE SATURDAY
+1) Add a read(1) to each part of roverpacket.py
 
 DONE
 1) Add mutex's to roverStatus and queue
