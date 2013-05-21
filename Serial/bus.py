@@ -11,7 +11,7 @@ import serial
 
 class Bus(object):
     def __init__(self):
-        self.base = serial.Serial(port='/dev/ttyO5',
+        self.base = serial.Serial(port='/dev/ttyO2',
                                   baudrate=115200)
         self.arm = serial.Serial(port='/dev/ttyO1',
                                  baudrate=115200)
@@ -19,13 +19,13 @@ class Bus(object):
 #                                    baudrate=115200)
         self.drive = serial.Serial(port='/dev/ttyO4',
                                    baudrate=115200)
-	self.gps = serial.Serial(port='/dev/ttyO2',
+	self.gps = serial.Serial(port='/dev/ttyO5',
 				baudrate=38400)
 
     def restart(self, bus_name):
         if bus_name == 'base':
             self.base.close()
-            self.base = serial.Serial(port='/dev/ttyO5',
+            self.base = serial.Serial(port='/dev/ttyO2',
                                       baudrate=115200)
         elif bus_name == 'arm':
             self.arm.close()
@@ -41,7 +41,7 @@ class Bus(object):
                                        baudrate=115200)
 	elif bus_name == 'gps':
 	    self.gps.close()
-            self.gps = serial.Serial(port='/dev/ttyO2',
+            self.gps = serial.Serial(port='/dev/ttyO5',
                                 baudrate=38400)
         elif bus_name == 'all':
             self.restart('base')
