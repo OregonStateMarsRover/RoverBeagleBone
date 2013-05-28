@@ -8,9 +8,9 @@
 import math
 
 class RoverStatus():
-    def __init__(self, roverStatusMutex, queueMutex):
-        self.roverStatusMutex = roverStatusMutex
-        self.queueMutex = queueMutex
+#    def __init__(self, roverStatusMutex, queueMutex):
+#        self.roverStatusMutex = roverStatusMutex
+#        self.queueMutex = queueMutex
 
     # Error Tracking
     checksum_errors  = 0

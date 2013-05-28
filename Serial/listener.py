@@ -25,36 +25,21 @@ class Listener(threading.Thread):
         self.bus = bus
         self.queue = queue
         self.roverStatus = roverStatus
-        self.roverTimeout = 10  # Seconds to wait before killing the rover
 
     def run(self):
-        print "Running Listener"
-        intervalAlive_start = time.time()  # Start timer to catch roverAlive messages
         while 1:
             packet = None
-            if (time.time() - intervalAlive_start) > self.roverTimeout:
-                with self.roverStatus.roverStatusMutex:
-                    self.roverStatus.roverAlive = 1
-                print "..................................LOST ROVER SIGNAL!!!"
-                intervalAlive_start = time.time()  # Reset roverAlive timer
             if self.bus.base.inWaiting() > 0:
+                if self.bus.base.inWaiting() > 1000:
+                    self.bus.base.flushInput()
+                    self.bus.base.flushOutput()
                 packet = RoverPacket.from_rx(self.bus.base)  # Retreive bytearray
-                #print packet
-                # Check for errors
-                error_status = self.errorCheck()
-                if error_status == "continue":
-                    continue
-
                 if packet.addr == 1:
                     # BeagleBone
-                    if packet.content[0] == 17:
-                        with self.roverStatus.queueMutex:
-                            self.queue.put(['beaglebone'])
-                        intervalAlive_start = time.time()  # Reset roverAlive timer
+                    pass
                 elif (packet.addr >= 2) and (packet.addr <= 7):
                     # Drive
                     self.roverStatus.wheel_commands[packet.addr - 2]['velo'] = packet.content[0]
-                    self.roverStatus.wheel_commands[packet.addr - 2]['angle'] = packet.content[1]
                 elif packet.addr == 8:
                     # Arm
                     secAddr = packet.content[0]
@@ -133,7 +118,7 @@ class Listener(threading.Thread):
                         self.roverStatus.package_four = True
                     elif package_select == 5:
                         self.roverStatus.package_five = True
-            self.readGPS()
+            #self.readGPS()
 
     def readGPS(self):
         gprmc_id = 'GPRMC'
@@ -153,7 +138,7 @@ class Listener(threading.Thread):
                         msg = msg.split(',')
 
                         # Split into variables
-			utc_time = msg[1]
+                        utc_time = msg[1]
                         nav_rec_warn = msg[2]
                         latitude = msg[3] + msg[4]
                         longitude = msg[5] + msg[6]
@@ -161,41 +146,10 @@ class Listener(threading.Thread):
                         magnetic_variation = msg[10]
 
                         # Update Rover Status
-                        with self.roverStatus.roverStatusMutex:
-                            self.roverStatus.utc_time = utc_time
-                            self.roverStatus.latitude = latitude
-                            self.roverStatus.longitude = longitude
-                            self.roverStatus.speed_gps = speed
-                            self.roverStatus.nav_rec_warn = nav_rec_warn
-                            self.roverStatus.magnetic_var = magnetic_variation
-
-
-    def emergencyStop(self):
-        wheel = [2, 3, 4, 5, 6, 7]
-        for wheelAddr in wheels:
-            packet = BogiePacket(wheelAddr, 0, 0)
-            with self.roverStatus.queueMutex:
-                self.queue.put(packet)
-
-    def errorCheck(self):
-        if RoverPacket.checksum_error == 1:
-            bus.base.flushInput()
-            print "Flushed Base Input Buffer"
-            RoverPacket.checksum_error = 0
-            with self.roverStatus.roverStatusMutex:
-                self.roverStatus.checksum_errors += 1
-            return "continue"
-        if RoverPacket.unexpectedcontrolchar_error == 1:
-            bus.base.flushInput()
-            print "Flushed Base Input Buffer"
-            RoverPacket.unexpectedcontrolchar_error = 0
-            with self.roverStatus.roverStatusMutex:
-                self.roverStatus.unexpectedcontrolchar_errors += 1
-            return "continue"
-        if RoverPacket.start_byte_error == 1:
-            bus.base.flushInput()
-            print "Flushed Base Input Buffer"
-            RoverPacket.start_byte_error = 0
-            with self.roverStatus.roverStatusMutex:
-                self.roverStatus.start_byte_errors += 1
-            return "continue"
+#                        with self.roverStatus.roverStatusMutex:
+                        self.roverStatus.utc_time = utc_time
+                        self.roverStatus.latitude = latitude
+                        self.roverStatus.longitude = longitude
+                        self.roverStatus.speed_gps = speed
+                        self.roverStatus.nav_rec_warn = nav_rec_warn
+                        self.roverStatus.magnetic_var = magnetic_variation

@@ -25,20 +25,13 @@ from debugTerminalStates import *
 
 class Receptionist(object):
     def __init__(self):
-        self.drivecount = 0
-        self.bbcount = 0
-        self.armcount = 0
-        self.tripodcount = 0
-        self.muxcount = 0
-        self.packagecount = 0
-
         # Create Mutex's
-        self.roverStatusMutex = Lock()
-        self.queueMutex = Lock()
+#        self.roverStatusMutex = Lock()
+#        self.queueMutex = Lock()
 
         self.bus = Bus()
         self.commands_queue = Queue.Queue()
-        self.roverStatus = RoverStatus(self.roverStatusMutex, self.queueMutex)
+        self.roverStatus = RoverStatus()#self.roverStatusMutex, self.queueMutex)
         # This listener, listens to every port and adds messages to the queue
         self.listenerthread = Listener(self.bus, self.commands_queue, self.roverStatus)
         self.listenerthread.start()
@@ -46,10 +39,6 @@ class Receptionist(object):
         # to all of the modules based on those commands
         self.queuerthread = Queuer(self.commands_queue, self.roverStatus)
         self.queuerthread.start()
-        # The Debug Terminal States, reads roverStatus and displays the changing values on the Terminal
-        # for debugging purposes
-        self.debugthread = debugTerminalStates(self.roverStatus)
-        self.debugthread.start()
 
 
     def start(self):
@@ -61,44 +50,30 @@ class Receptionist(object):
         self.flush_all_buffers()
         while 1:
             if self.commands_queue.empty() is False:
-                with self.roverStatus.queueMutex:
-                    packet = self.commands_queue.get()
-                #print packet
+#                with self.roverStatus.queueMutex:
+                packet = self.commands_queue.get()
                 self.onrover_send_data(packet)
-
-            # if self.rover_queue.empty() is False:
-            #	# Do Something
 
     def onrover_send_data(self, packet):
         # This function receives a packet and determines where to
         # send it and then sends it
         if packet[0] == 'beaglebone':
-            self.bbcount = self.bbcount + 1
-            #print "BeagleBone packet %d received!" % self.bbcount
+            pass
         if packet[0] == 'drive':
-            self.drivecount = self.drivecount + 1
-            addr = packet[1]
-            pck = packet[2]
+            pck = packet[1]
             self.bus.drive.write(pck)
-	    #print "Drive", self.drivecount, "-", addr, velo, angle
+            print self.bus.base.inWaiting()
+            #print "Drive:", repr(pck)
         elif packet[0] == 'arm':
-            self.armcount = self.armcount + 1
-            pck = packet[2]
-            self.bus.drive.write(pck)
-            #print "Arm %d" % self.armcount
-            self.bus.arm.write(packet[2])
+            pck = packet[1]
+            self.bus.arm.write(pck)
         elif packet[0] == 'tripod':
-            self.tripodcount = self.tripodcount + 1
-            #print "Tripod %d" % self.tripodcount
-            self.bus.tripod.write(packet[2])
-        elif packet[0] == 'mux':
-            self.muxcount = self.muxcount + 1
-            #print "MUX %d" % self.muxcount
-#			self.bus.mux.write(packet[2])
+            pck = packet[1]
+            self.bus.tripod.write(pck)
         elif packet[0] == 'package':
-            self.packagecount = self.packagecount + 1
-            #print "Package %d" % self.packagecount
-#			self.bus.package.write(packet[2])
+            print "Package!"
+        elif packet[0] == 'stillcamera':
+            print "Still Camera!"
 
     def flush_all_buffers(self):
         self.bus.base.flushInput()
