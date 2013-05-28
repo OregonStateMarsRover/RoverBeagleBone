@@ -21,30 +21,21 @@ class Queuer(threading.Thread):
 
     def run(self):
         while 1:
-            with self.roverStatus.roverStatusMutex:
-                roverAlive = self.roverStatus.roverAlive
-            if roverAlive == 1:
-                # Make Drive Commands
-                drive_commands = self.poll_drive_command()
-                drive_commands = self.assemble_drive_packets(drive_commands)
-                for command in drive_commands:
-                    command = ['drive', command[1], command]
-                    with self.roverStatus.queueMutex:
-                        self.receptionist_queue.put(command)
-                # Make Arm Commands
-                arm_commands = self.poll_arm_command()
-                arm_commands = self.assemble_arm_packets(arm_commands)
-                for command in arm_commands:
-                    command = ['arm', command[1], command]
-                    with self.roverStatus.queueMutex:
-                        self.receptionist_queue.put(command)
-            elif roverAlive == 0:
-                # Make Rover STOP Immediately - Connection has been lost
-                drive_commands = self.assemble_stop_drive_packets()
-                for command in drive_commands:
-                    command = ['drive', command[1], command]
-                    with self.roverStatus.queueMutex:
-                        self.receptionist_queue.put(command)
+            # Make Drive Commands
+            drive_commands = self.poll_drive_command()
+            drive_commands = self.assemble_drive_packets(drive_commands)
+            for command in drive_commands:
+                command = ['drive', command]
+#                with self.roverStatus.queueMutex:
+                self.receptionist_queue.put(command)
+                    
+            # Make Arm Commands
+            arm_commands = self.poll_arm_command()
+            arm_commands = self.assemble_arm_packets(arm_commands)
+            for command in arm_commands:
+                command = ['arm', command]
+#                with self.roverStatus.queueMutex:
+                self.receptionist_queue.put(command)
             time.sleep(self.waitTime)
 
     def assemble_drive_packets(self, drive_commands):
@@ -78,9 +69,9 @@ class Queuer(threading.Thread):
         # (wheelAddr, velocity, angle)
         command_list = []
         for wheelAddr in range(2, 8):
-            with self.roverStatus.roverStatusMutex:
-                velocity = self.roverStatus.wheel_commands[wheelAddr - 2]['velo']
-                angle = self.roverStatus.wheel_commands[wheelAddr - 2]['angle']
+#            with self.roverStatus.roverStatusMutex:
+            velocity = self.roverStatus.wheel_commands[wheelAddr - 2]['velo']
+            angle = self.roverStatus.wheel_commands[wheelAddr - 2]['angle']
             cmd = wheelAddr, velocity, angle
             command_list.append(cmd)
 
@@ -98,15 +89,15 @@ class Queuer(threading.Thread):
         #                                 voltage_data: 6
         command_list = []
 
-        with self.roverStatus.roverStatusMutex:
-            shoulder = self.roverStatus.arm_shoulder
-            elbow = self.roverStatus.arm_elbow
-            wrist_angle = self.roverStatus.wrist_angle
-            wrist_tilt = self.roverStatus.wrist_tilt
-            scoop_toggle = self.roverStatus.scoop_toggle
-            voltage_toggle = self.roverStatus.voltage_toggle
-            probe_toggle = self.roverStatus.probe_toggle
-            probe_distance = self.roverStatus.probe_distance
+#        with self.roverStatus.roverStatusMutex:
+        shoulder = self.roverStatus.arm_shoulder
+        elbow = self.roverStatus.arm_elbow
+        wrist_angle = self.roverStatus.wrist_angle
+        wrist_tilt = self.roverStatus.wrist_tilt
+        scoop_toggle = self.roverStatus.scoop_toggle
+        voltage_toggle = self.roverStatus.voltage_toggle
+        probe_toggle = self.roverStatus.probe_toggle
+        probe_distance = self.roverStatus.probe_distance
         armAddr = 8
         wristAddr = 9
 
