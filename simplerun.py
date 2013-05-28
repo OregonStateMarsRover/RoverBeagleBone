@@ -34,6 +34,9 @@ class SimpleRun(threading.Thread):
         while 1:
             packet = None
             if self.bus.base.inWaiting() > 0:
+                if self.bus.base.inWaiting() > 1000:
+                    self.bus.base.flushInput()
+                    self.bus.base.flushOutput()
                 packet = RoverPacket.from_rx(self.bus.base)  # Retreive bytearray
                 packet = packet.msg()
                 print self.bus.base.inWaiting()
