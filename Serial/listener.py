@@ -33,7 +33,10 @@ class Listener(threading.Thread):
                 if self.bus.base.inWaiting() > 1000:
                     self.bus.base.flushInput()
                     self.bus.base.flushOutput()
-                packet = RoverPacket.from_rx(self.bus.base)  # Retreive bytearray
+                try:
+                    packet = RoverPacket.from_rx(self.bus.base)  # Retreive bytearray
+                except:
+                    continue
                 if packet.addr == 1:
                     # BeagleBone
                     pass

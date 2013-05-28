@@ -72,7 +72,10 @@ class RoverPacket(object):
             print "Error: no bytes waiting on port"
         # Read from port, and if it's not the start_byte, then start over
         while 1:
-            start = int(port.read(1).encode("hex"), 16)
+            try:
+                start = int(port.read(1).encode("hex"), 16)
+            except:
+                continue
             if start == self.start_byte:
                 break
 
@@ -80,14 +83,20 @@ class RoverPacket(object):
             #raise Exception("start byte error %s != %s" % (start, self.start_byte))
             print "start byte error %s != %s" % (start, self.start_byte)
             self.start_byte_error = 1
-        self.addr = int(port.read(1).encode("hex"), 16)
-        length = int(port.read(1).encode("hex"), 16)
-        escaped_content = bytearray(port.read(length - 1))
+        try:
+            self.addr = int(port.read(1).encode("hex"), 16)
+            length = int(port.read(1).encode("hex"), 16)
+            escaped_content = bytearray(port.read(length - 1))
+        except:
+            pass
 
         self.content = self.unescape_content(escaped_content)
         self.compute_full_message()
 
-        checksum = int(port.read(1).encode("hex"), 16)
+        try:
+            checksum = int(port.read(1).encode("hex"), 16)
+        except:
+            pass
         if checksum != self.checksum:
             # raise Exception("checksum error %s != %s"%(checksum, self.checksum))
             print "checksum error %s != %s" % (checksum, self.checksum)
